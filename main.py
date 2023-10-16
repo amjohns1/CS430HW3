@@ -7,7 +7,7 @@ from sigmoid import sigmoid
 def prepare_data(target_class, data):
     class_data = {}
     for class_name in data['class'].unique():
-        class_data[class_name] = data[data['class'] == class_name]
+        class_data[class_name] = data[data['class'] == class_name].copy()
 
     X_train_data = []
     X_test_data = []
@@ -40,8 +40,9 @@ def cost(theta, x, y):
     # Calculating the loss or cost
     m = x.shape[0]
 
-    h = sigmoid(np.dot(x, theta))
-    cost = -(1 / m) * np.sum(y * np.log(h) + (1-y) * np.log(1 - h))
+    with np.errstate(divide='ignore'):
+        h = sigmoid(np.dot(x, theta))
+        cost = -(1 / m) * np.sum(y * np.log(h) + (1-y) * np.log(1 - h))
 
     return cost
 
@@ -143,6 +144,8 @@ def main():
         else:
             print(f"{metric}: {value}")
 
+    print("Thetas: ", weights_setosa)
+
     # Print the metrics for Versicolor
     print("\nMetrics for Versicolor:")
     for metric, value in metrics_versicolor.items():
@@ -150,6 +153,8 @@ def main():
             print(f"{metric}:\n{value}")
         else:
             print(f"{metric}: {value}")
+
+    print("Thetas: ", weights_versicolor)
 
     # Print the metrics for Virginica
     print("\nMetrics for Virginica:")
@@ -159,7 +164,8 @@ def main():
         else:
             print(f"{metric}: {value}")
 
-    # Plot matrices and perform further analysis here
+    print("Thetas: ", weights_virginica)
+
     return
 
 if __name__ == "__main__":
